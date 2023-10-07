@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "662051055341",
+    "project_id": "flutterauth-e6495",
+    "storage_bucket": "flutterauth-e6495.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662051055341:android:a5b56befd6f4803289cee4",
+        "android_client_info": {
+          "package_name": "com.example.food"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqqplpBOXCTbToDmIVLv-JTXqhgFqkFrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662051055341:android:1de84204aac41e0d89cee4",
+        "android_client_info": {
+          "package_name": "com.example.se_lab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqqplpBOXCTbToDmIVLv-JTXqhgFqkFrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
