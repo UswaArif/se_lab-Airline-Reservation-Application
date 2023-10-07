@@ -5,8 +5,6 @@ import 'package:se_lab/pages/llogin_page.dart';
 import 'package:se_lab/repository/user_repository.dart';
 
 
-
-
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -17,9 +15,23 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _phone = TextEditingController();
+  final TextEditingController _address = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool isLoading = false;
+  final String _role = "customer";
+
+  DateTime _updated_at = DateTime.now(); // Initialize with the current time.
+
+  // When something changes, update _updated_at.
+  void updateSomething() {
+    // Perform the update operation here.
+
+    // Update _updated_at with the current time.
+    _updated_at = DateTime.now();
+  }
+
 
   // Get an instance of your UserRepository
   final UserRepository userRepository = UserRepository();
@@ -42,8 +54,14 @@ class _SignUpState extends State<SignUp> {
       final user = UserModel(
         id: userCredential.user!.uid, // Use the UID from Firebase Authentication
         fullName: _name.text,
+        phone: int.parse(_phone.text),
+        address: _address.text,
         email: _email.text,
         password: _password.text,
+        role: _role,
+        created_at: DateTime.now().toString(),
+        updated_at: _updated_at.toString(),
+        active: true,
       );
       // Call the createUser method from UserRepository to store user data
       userRepository.createUser(context, user);
@@ -86,6 +104,26 @@ class _SignUpState extends State<SignUp> {
                     return null;
                   },
                   decoration: const InputDecoration(hintText: "Name"),
+                ),
+                TextFormField(
+                  controller: _phone,
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'Phone Number is empty';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(hintText: "Phone Number"),
+                ),
+                TextFormField(
+                  controller: _address,
+                  validator: (text) {
+                    if (text == null || text.isEmpty) {
+                      return 'Address is empty';
+                    }
+                    return null;
+                  },
+                  decoration: const InputDecoration(hintText: "Address"),
                 ),
                 TextFormField(
                   controller: _email,

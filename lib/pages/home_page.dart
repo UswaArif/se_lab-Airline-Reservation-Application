@@ -1,24 +1,84 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/pages/llogin_page.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget  {
    HomePage({super.key});
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final user = FirebaseAuth.instance.currentUser;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Home Page"),
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState!.openDrawer();
+          },
+          icon: const Icon(Icons.menu),
+        ),
         actions: [
           IconButton(
             onPressed: ()async {
-              await FirebaseAuth.instance.signOut();
+              try {
+                await FirebaseAuth.instance.signOut();
+                print("DOne");
+                Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()), // Replace with the actual name of your sign-up page class
+                        );
+                // Redirect or perform other actions after successful sign-out.
+              } catch (e) {
+                print("Error during sign out: $e");
+                // Handle the error as needed.
+              }
             },
             icon: const Icon(Icons.login),
             ),
         ],
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            UserAccountsDrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.deepPurple.shade900,
+              ),
+              accountName: Text(user!.displayName ?? ""), // Display name of the user
+              accountEmail: Text(user!.email ?? ""), // Email of the user
+              currentAccountPicture: const CircleAvatar( 
+                radius: 50.0,             
+                child: Icon(Icons.person), // Placeholder icon if no profile picture
+              ),         
+              
+            ),
+            ListTile(
+              title: Text("Profile"),
+              onTap: () {
+                // Handle menu item 1 tap
+              },
+            ),
+            ListTile(
+              title: Text("Menu Item 2"),
+              onTap: () {
+                // Handle menu item 2 tap
+              },
+            ),
+            // Add more menu items as needed
+          ],
+        ),
       ),
 
       body: Padding(
@@ -49,3 +109,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
+  
+

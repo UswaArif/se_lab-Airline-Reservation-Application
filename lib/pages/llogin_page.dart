@@ -180,7 +180,8 @@ class _loginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                        ), );
+                        ), 
+                        );
                     }, 
                     child: const Text("Forget Password?", style: TextStyle(
                           decoration: TextDecoration.underline,
