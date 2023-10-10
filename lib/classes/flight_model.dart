@@ -1,32 +1,36 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel{
+class FlightModel{
   final String? id;
-  final String fullName;
-  final int phone;
-  final String address;
-  final String email;
-  final String password;
-  final String role;
-  final String created_at;
-  final String updated_at;
+  final int flight_number;
+  final String source_place;
+  final String destination_place;
+  final DateTime departure;
+  final DateTime arrival;
+  final int price;
+  final int available_seats;
+  final String flight_status;
+  final DateTime created_at;
+  final DateTime updated_at;
   final bool active;
 
-  const UserModel({
+  const FlightModel({
     this.id, 
-    required this.fullName,
-    required this.phone,
-    required this.address,
-    required this.email,
-    required this.password,
-    required this.role,
+    required this.flight_number,
+    required this.source_place,
+    required this.destination_place,
+    required this.departure,
+    required this.arrival,
+    required this.price,
+    required this.available_seats,
+    required this.flight_status,
     required this.created_at,
     required this.updated_at,
     required this.active,
   });
   
 
-  toJson(){
+  /*toJson(){
     return{
       "FullName" : fullName,
       "Phone" : phone,
@@ -55,5 +59,5 @@ class UserModel{
       updated_at: data["Updated At"], 
       active: data["Active"],
       );
-  }
+  }*/
 }

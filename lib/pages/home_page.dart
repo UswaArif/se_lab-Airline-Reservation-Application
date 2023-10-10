@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/pages/add_flight_page.dart';
+import 'package:se_lab/pages/customer_home_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:se_lab/pages/profile_page.dart';
+import 'package:se_lab/widgets/drawer.dart';
 
 class HomePage extends StatefulWidget  {
    HomePage({super.key});
@@ -48,7 +51,22 @@ class _HomePageState extends State<HomePage> {
             ),
         ],
       ),
-      drawer: Drawer(
+      drawer: MyDrawer(
+        user: user,
+        onProfileTap: () {
+          // Handle profile tap
+          Navigator.of(context).pop(); 
+          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const AddFlight()), // Replace with the actual name of your sign-up page class
+                        );// Close the drawer
+        },
+        onMenuItem2Tap: () {
+          // Handle menu item 2 tap
+          // Add navigation or other actions here
+        },
+      ),
+      /*drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -79,7 +97,7 @@ class _HomePageState extends State<HomePage> {
             // Add more menu items as needed
           ],
         ),
-      ),
+      ),*/
 
       body: Padding(
         padding: const EdgeInsets.all(20.0),
