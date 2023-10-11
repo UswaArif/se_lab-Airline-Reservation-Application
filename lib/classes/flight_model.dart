@@ -30,20 +30,22 @@ class FlightModel{
   });
   
 
-  /*toJson(){
+  toJson(){
     return{
-      "FullName" : fullName,
-      "Phone" : phone,
-      "Address" : address,
-      "Email": email,
-      "Password": password,
-      "Role" : role,
-      "Created_At" : created_at,
-      "Updated_At" : updated_at,
+      "FlightNumber" : flight_number,
+      "Source" : source_place,
+      "Destination" : destination_place,
+      "DepartureTime": departure,
+      "ArrivalTIme": arrival,
+      "Price" : price,
+      "AvailableSeats" : available_seats,
+      "FlightStatus" : flight_status,
+      "CreatedAt" : created_at,
+      "UpdatedAt" : updated_at,
       "Active" : active,
     };
   }
-
+  /*
   //Map user fetched data from Firebase to UserModel
   factory UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document){
     final data = document.data()!;
