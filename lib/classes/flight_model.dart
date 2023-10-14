@@ -29,8 +29,8 @@ class FlightModel{
     required this.active,
   });
   
-
-  toJson(){
+ //added Map<String, dynamic>
+  Map<String, dynamic> toJson(){
     return{
       "FlightNumber" : flight_number,
       "Source" : source_place,
