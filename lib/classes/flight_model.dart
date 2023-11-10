@@ -45,21 +45,23 @@ class FlightModel{
       "Active" : active,
     };
   }
-  /*
-  //Map user fetched data from Firebase to UserModel
-  factory UserModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document){
+  
+  //Map flight fetched data from Firebase to FlightModel
+  factory FlightModel.fromSnapshot(DocumentSnapshot<Map<String, dynamic>> document){
     final data = document.data()!;
-    return UserModel(
+    return FlightModel(
       id: document.id, 
-      fullName: data["FullName"], 
-      phone: data["Phone"], 
-      address: data["Address"], 
-      email: data["Email"], 
-      password: data["Password"], 
-      role: data["Role"], 
-      created_at: data["Created_At"], 
-      updated_at: data["Updated At"], 
-      active: data["Active"],
+      flight_number: data["FlightNumber"], 
+      source_place: data["Source"], 
+      destination_place: data["Destination"], 
+      departure: data["DepartureTime"], 
+      arrival: data["ArrivalTIme"],
+      price: data["Price"],
+      available_seats: data["AvailableSeats"],
+      flight_status: data["FlightStatus"],
+      created_at: data["CreatedAt"],
+      updated_at: data["UpdatedAt"],
+      active: data["Active"]
       );
-  }*/
+  }
 }

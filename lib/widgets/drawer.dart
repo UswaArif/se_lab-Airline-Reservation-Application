@@ -35,7 +35,7 @@ class MyDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            title: Text("Your trips"),
+            title: Text("View Flight"),
             onTap: () {
               if (onMenuItem2Tap != null) {
                 onMenuItem2Tap!();

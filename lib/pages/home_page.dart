@@ -5,6 +5,7 @@ import 'package:se_lab/pages/customer_home_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/pages/profile_page.dart';
+import 'package:se_lab/pages/view_flight_page.dart';
 import 'package:se_lab/widgets/drawer.dart';
 
 class HomePage extends StatefulWidget  {
@@ -62,8 +63,11 @@ class _HomePageState extends State<HomePage> {
                         );// Close the drawer
         },
         onMenuItem2Tap: () {
-          // Handle menu item 2 tap
-          // Add navigation or other actions here
+          Navigator.of(context).pop(); 
+          Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const ViewFlight()), 
+                        );
         },
       ),
       /*drawer: Drawer(

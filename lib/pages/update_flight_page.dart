@@ -1,18 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';  // text input in numbers
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/flight_model.dart';
 import 'package:se_lab/repository/flight_repository.dart';
 
-class AddFlight extends StatefulWidget {
-  const AddFlight({super.key});
+class UpdateFlightPage extends StatefulWidget {
+  final Map<String, dynamic> flightData;
+  const UpdateFlightPage({
+    Key? key,
+    required this.flightData,
+  }) : super(key: key);
+
+  //const UpdateFlightPage({super.key, required Map<String, dynamic> flightData});
 
   @override
-  State<AddFlight> createState() => _addFlightState();
+  State<UpdateFlightPage> createState() => _updateFlightState();
 }
 
-class _addFlightState extends State<AddFlight> {
+class _updateFlightState extends State<UpdateFlightPage> {
   final _formKey2 = GlobalKey<FormState>();
   final TextEditingController _flightnumber = TextEditingController();
   final TextEditingController _source = TextEditingController();
@@ -26,6 +32,34 @@ class _addFlightState extends State<AddFlight> {
   bool _isOnTime = false;
   bool isLoading = false;
   String ontime = "On Time";
+  final flightRepository = FlightRepository();
+
+  @override
+  void initState() {
+    super.initState();
+    print(widget.flightData);
+    // Set initial values based on flightData
+    _flightnumber.text = widget.flightData['FlightNumber'].toString();
+    _source.text = widget.flightData['Source'];
+    if(widget.flightData['Destination'] != null)
+    {
+      _destination.text = widget.flightData['Destination'];
+    }
+    else{
+      _destination.text = "null";
+    }
+    // Format date and time to string for departure and arrival fields
+    _departure.text = DateFormat('yyyy-MM-dd HH:mm').format(widget.flightData['DepartureTime'].toDate());
+    _arrival.text = DateFormat('yyyy-MM-dd HH:mm').format(widget.flightData['ArrivalTIme'].toDate());
+    _price.text = widget.flightData['Price'].toString();
+    _availableseats.text = widget.flightData['AvailableSeats'].toString();
+    // Check the flight status to set the checkboxes
+    if (widget.flightData['FlightStatus'] == 'On Time') {
+      _isOnTime = true;
+    } else if (widget.flightData['FlightStatus'] == 'Delayed') {
+      _isDelayed = true;
+    }
+  }
 
   DateTime? selectedDateTime; // Store the selected date and time
   
@@ -93,44 +127,14 @@ class _addFlightState extends State<AddFlight> {
     }
   }
 
-  addFlight() {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-
-      // Add FLight object using your class
-      final flight = FlightModel(
-        flight_number: int.parse(_flightnumber.text),
-        source_place: _source.text,
-        destination_place: _destination.text,
-        departure: DateTime.parse(_departure.text),
-        arrival: DateTime.parse(_arrival.text),
-        price: int.parse(_price.text),
-        available_seats: int.parse(_availableseats.text),
-        flight_status: ontime,
-        created_at: DateTime.now(),
-        updated_at: DateTime.now(),
-        active: true,
-      );
-
-      // Call the createFlight method from FightRepository to store flight data
-      final flightRepository = FlightRepository();
-      flightRepository.createFlight(context, flight);
-      print("Flight added Successfully.");
-
-      setState(() {
-        isLoading = false;
-      });  
-    } 
-    catch (e) {
-      setState(() {
-        isLoading = false;
-        print("Not done");
-      });
-      print("here is error");
+  updateFlight(FlightModel flight) async{
+    try{
+      await flightRepository.updateFlightRecord(flight);
+    //print("updateFlight");
+    } catch (e) {
       print(e);
     }
+    
   }
 
   @override
@@ -157,7 +161,7 @@ class _addFlightState extends State<AddFlight> {
             child: Padding(
               padding: EdgeInsets.only(left: 16.0),
               child: Text(
-                "Add Flight",
+                "Update Flight",
                 style: TextStyle(
                   fontSize: 26,
                   fontWeight: FontWeight.bold,
@@ -259,7 +263,7 @@ class _addFlightState extends State<AddFlight> {
                           ),
                         ),
                       ),
-                      
+
                       //Datetime fields
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0), // Add left and right margin
@@ -289,7 +293,6 @@ class _addFlightState extends State<AddFlight> {
                           },
                         ),
                       ),
-
                       //Arrival datetime
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0), // Add left and right margin
@@ -316,37 +319,6 @@ class _addFlightState extends State<AddFlight> {
                           ),
                           onTap: (){
                             timegiven2();
-                            /*TimeOfDay? pickedTime;
-                            DateTime? pickerdate = await showDatePicker(
-                            context: context, 
-                            initialDate: DateTime.now(), 
-                            firstDate: DateTime(2000), 
-                            lastDate: DateTime(2101)
-                            );
-                            // Show the time picker
-                            if (pickerdate != null) {
-                              pickedTime = await showTimePicker(
-                                context: context,
-                                initialTime: TimeOfDay.now(),
-                              );
-                            }
-
-                            if(pickerdate != null && pickedTime != null){
-                              /*setState(() {
-                                _departure.text = DateFormat('yyyy-MM-dd').format(pickerdate);
-                              });*/
-                              // Combine the selected date and time into a single DateTime object
-                              DateTime selectedDateTime = DateTime(
-                                pickerdate.year,
-                                pickerdate.month,
-                                pickerdate.day,
-                                pickedTime.hour,
-                                pickedTime.minute,
-                              );
-
-                              // Now you can use selectedDateTime, which contains both date and time.
-                              _arrival.text = DateFormat('yyyy-MM-dd HH:mm').format(selectedDateTime);
-                            }*/
                           },
                         ),
                       ),
@@ -361,10 +333,6 @@ class _addFlightState extends State<AddFlight> {
                             } else if (double.tryParse(text) == null || double.parse(text) < 0) {
                               return 'Please enter a valid non-negative number';
                             }
-                            /*else if (text.contains('.')) {
-                              // Check for points (decimal separators)
-                              return 'Price should not contain points';
-                            }*/
                               return null;
                           },
                           keyboardType: TextInputType.number, // Allow only numeric input
@@ -386,7 +354,6 @@ class _addFlightState extends State<AddFlight> {
                           ),
                         ),
                       ),
-
                       //Seats numbers
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0), // Add left and right margin
@@ -442,7 +409,7 @@ class _addFlightState extends State<AddFlight> {
                                     _isDelayed = false; // Ensure only one checkbox is selected
                                     // Store the selected status in the controller
                                     _isOnTime = true;
-                                    _flightstatus.text = _isOnTime ? 'On Time' : '';
+                                    //_flightstatus.text = _isOnTime ? 'On Time' : '';
                                   });
                                 }                               
                               },
@@ -481,8 +448,8 @@ class _addFlightState extends State<AddFlight> {
                           ],   
                         ),
                       ),
-           
-                      // Add more TextFormField widgets as needed
+
+                                            // Add more TextFormField widgets as needed
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 30.0), // Add left and right margin
                         child: SizedBox(
@@ -491,9 +458,27 @@ class _addFlightState extends State<AddFlight> {
                           child: ElevatedButton(
                              
                             onPressed: () {
-                              //addFlight(); 
+
                               if (_formKey2.currentState!.validate()) {
-                                addFlight();                                   
+                                DateTime createdAt = (widget.flightData['CreatedAt'] as Timestamp).toDate();
+
+                                final flight = FlightModel(
+                                id: widget.flightData['documentId'],
+                                flight_number: int.parse(_flightnumber.text),
+                                source_place: _source.text,
+                                destination_place: _destination.text,
+                                //departure: departureTimestamp,
+                                departure: DateTime.parse(_departure.text),
+                                arrival: DateTime.parse(_arrival.text),
+                                price: int.parse(_price.text),
+                                available_seats: int.parse(_availableseats.text),
+                                flight_status: ontime,
+                                created_at: createdAt,
+                                updated_at: DateTime.now(),
+                                active: true,
+                                );
+                                print(flight.flight_number);
+                                updateFlight(flight);                                   
                               } 
                             },
                             
@@ -503,7 +488,7 @@ class _addFlightState extends State<AddFlight> {
                                       color: Colors.white,
                                     ),
                             )
-                            : const Text('Add Flight'),
+                            : const Text('Update Flight'),
                           ),
                           
                         ),
@@ -513,8 +498,7 @@ class _addFlightState extends State<AddFlight> {
                 ),
               ),
             ),
-          )
-          // Add the rest of your content here
+          ),
         ],
       ),
     );

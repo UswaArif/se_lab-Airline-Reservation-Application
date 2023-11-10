@@ -33,48 +33,54 @@ class _loginPageState extends State<LoginPage> {
   }
 
   Future<void> signInWithEmailAndPassword() async {
-    try {
-      setState(() {
-        isLoading = true;
-      });
-      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _email.text,
-        password: _password.text,     
-        
-      );
-      print("Valid");
+  try {
+    setState(() {
+      isLoading = true;
+    });
 
-     // Check if the userCredential.user is not null before accessing it
+    UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      email: _email.text,
+      password: _password.text,
+    );
+
     if (userCredential.user != null) {
       User user = userCredential.user!;
-
-      // Get the authenticated user's email
       String? authUserEmail = user.email;
 
-      // Query Firestore to find a document with the matching email
       QuerySnapshot querySnapshot = await FirebaseFirestore.instance
           .collection("Users")
           .where("Email", isEqualTo: authUserEmail)
           .get();
 
-      // Check if there is a matching document
       if (querySnapshot.docs.isNotEmpty) {
-        // Get the first document (assuming there's only one match)
         DocumentSnapshot userDataSnapshot = querySnapshot.docs.first;
-
-        // Access user data from Firestore
         Map<String, dynamic> userData = userDataSnapshot.data() as Map<String, dynamic>;
 
-        // Now you can access user data like this:
         String username = userData['FullName'];
         String email = userData['Email'];
         String userRole = userData['Role'];
         role = userRole;
-        // ... (access other fields as needed)
 
         print("Full Name: $username");
         print("Email: $email");
-        print("ROle: $userRole ");
+        print("Role: $userRole");
+
+        if (role == "admin") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        } else if (role == "customer") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CustomerHomePage()),
+          );
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
+          );
+        }
       } else {
         // No matching document found in Firestore
         print("User data not found in Firestore for email: $authUserEmail");
@@ -83,29 +89,22 @@ class _loginPageState extends State<LoginPage> {
       // Handle the case where userCredential.user is null
       print("User authentication failed");
     }
-
-    
-  
-      
-      // If signInWithEmailAndPassword is successful, the user is signed in.
-      // You can navigate to the next screen or perform other actions here.
   } on FirebaseAuthException catch (e) {
-      // Handle Firebase Authentication exceptions
-      if (e.code == 'wrong-password' || e.code == 'user-not-found') {
-        _scaffoldMessengerState.showSnackBar(
-          const SnackBar(
-            content: Text("Invalid email or password."),
-          ),
-        );
-      } else {
-        // Handle other Firebase Authentication exceptions
-        print("Firebase Authentication Exception: ${e.code}");
-      }
-    } catch (e) {
-      // Handle other exceptions (not FirebaseAuthException)
-      print("An unexpected error occurred: $e");
+    if (e.code == 'wrong-password' || e.code == 'user-not-found') {
+      _scaffoldMessengerState.showSnackBar(
+        const SnackBar(
+          content: Text("Invalid email or password."),
+        ),
+      );
+    } else {
+      // Handle other Firebase Authentication exceptions
+      print("Firebase Authentication Exception: ${e.code}");
     }
+  } catch (e) {
+    print("An unexpected error occurred: $e");
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -242,25 +241,12 @@ class _loginPageState extends State<LoginPage> {
                       onPressed: ()async{
                         if (_formKey.currentState!.validate()){
                           signInWithEmailAndPassword(); 
-                          if(role == "admin")
-                          {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => HomePage()),
-                            ); 
-                          }
-                          else if(role == "customer")
-                          {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const CustomerHomePage()),
-                            ); 
-                          }
                           
-                          Navigator.push(
+                          
+                          /*Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) => HomePage()), // Replace with the actual name of your login page class
-                          );                           
+                          ); */                          
                         }
                       },
                       style: ElevatedButton.styleFrom(

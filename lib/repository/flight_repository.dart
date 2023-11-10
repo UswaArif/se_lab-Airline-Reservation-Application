@@ -31,4 +31,17 @@ class FlightRepository{
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+
+  Future<void> updateFlightRecord(FlightModel flight) async{
+    // final updatedData = flight.toJson();
+
+    // // Convert DateTime fields to Timestamp before updating Firestore
+    // updatedData['DepartureTime'] = Timestamp.fromDate(flight.departure);
+    // updatedData['ArrivalTIme'] = Timestamp.fromDate(flight.arrival);
+
+    // await _db.collection("Flight").doc(flight.id).update(updatedData);
+    
+    await _db.collection("Flight").doc(flight.id).update(flight.toJson());
+    print("Successfully updated");
+  }
 }
