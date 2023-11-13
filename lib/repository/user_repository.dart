@@ -5,7 +5,9 @@ import 'package:se_lab/classes/user_model.dart';
 class UserRepository {
   //static UserRepository get instance => Get.find();
   static UserRepository? _instance;
-  UserRepository userRepository = UserRepository(); // Get an instance
+  // Your other class methods and properties here
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  //UserRepository userRepository = UserRepository(); // Get an instance
   // Private constructor to prevent external instantiation
   UserRepository._();
 
@@ -15,8 +17,7 @@ class UserRepository {
     return _instance!;
   }
 
-  // Your other class methods and properties here
-  final _db = FirebaseFirestore.instance;
+  
   void createUser(BuildContext context, UserModel user) async {
     try {
       await _db.collection("Users").add(user.toJson());

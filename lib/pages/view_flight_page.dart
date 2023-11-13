@@ -200,7 +200,7 @@ String _formatTimestamp(Timestamp timestamp) {
                               ),
                             ),
                           );
-                          print(flightData);
+                          //print(flightData);
                         },
                         child: Container(
                           margin: const EdgeInsets.all(16.0),
