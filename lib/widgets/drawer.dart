@@ -6,8 +6,9 @@ class MyDrawer extends StatelessWidget {
   final User? user;
   final VoidCallback? onProfileTap;
   final VoidCallback? onMenuItem2Tap;
+  final VoidCallback? onMenuItem3Tap;
 
-  MyDrawer({required this.user, this.onProfileTap, this.onMenuItem2Tap});
+  MyDrawer({required this.user, this.onProfileTap, this.onMenuItem2Tap, this.onMenuItem3Tap});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,14 @@ class MyDrawer extends StatelessWidget {
             onTap: () {
               if (onMenuItem2Tap != null) {
                 onMenuItem2Tap!();
+              }
+            },
+          ),
+          ListTile(
+            title: Text("Add Seat"),
+            onTap: () {
+              if (onMenuItem3Tap != null) {
+                onMenuItem3Tap!();
               }
             },
           ),
