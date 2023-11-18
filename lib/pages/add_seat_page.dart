@@ -83,18 +83,18 @@ class _AddSeatPageState extends State<AddSeat> {
               child: ElevatedButton(
               onPressed: () {
                 Map<String, dynamic>? flightDataa;
-                // Add functionality for the button press here
+
                 for (Map<String, dynamic> flightData in flightDataList) {     
-                if (flightData['FlightNumber'] == int.tryParse(_flightnumber.text)) {
-                  isMatchFound = true;
-                  flightDataa = flightData;
-                  print("Flight Number is matched");
-                  break;
+                  if (flightData['FlightNumber'] == int.tryParse(_flightnumber.text)) {
+                    isMatchFound = true;
+                    flightDataa = flightData;
+                    print("Flight Number is matched");
+                    break;
+                  }
+                  else{
+                    isMatchFound = false;
+                  }
                 }
-                else{
-                  isMatchFound = false;
-                }
-              }
                 if (isMatchFound) {
                   Navigator.push(
                     context,

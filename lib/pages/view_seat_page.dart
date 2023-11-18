@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/pages/update_seat_page.dart';
 
 class ViewSeat extends StatefulWidget {
   const ViewSeat({super.key});
@@ -133,7 +134,7 @@ class _ViewSeatPageState extends State<ViewSeat> {
                                 setState(() {
                                   matchedSeatList.add(seatData);
                                 });
-                              }
+                              }                              
                             }
                             /*for (Map<String, dynamic> seatData in SeatDataList)
                             {
@@ -201,14 +202,12 @@ class _ViewSeatPageState extends State<ViewSeat> {
                             return GestureDetector(
                               onTap: () {
                                 print('Container tapped');
-                                /*Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UpdateFlightPage(
-                                      flightData: flightData,                             
-                                    ),
+                                    builder: (context) => UpdateSeat(seatData: seat,),
                                   ),
-                                );*/
+                                );
                               },
                               child: MouseRegion(
                                 onEnter: (_) {

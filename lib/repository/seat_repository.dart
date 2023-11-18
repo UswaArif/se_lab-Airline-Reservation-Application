@@ -29,4 +29,9 @@ class SeatRepository{
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+
+  Future<void> updateSeatRecord(SeatModel seat) async{
+    await _db.collection("Seats").doc(seat.id).update(seat.toJson());
+    print("Successfully updated seats");
+  }
 }
