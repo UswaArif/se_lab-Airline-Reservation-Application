@@ -7,6 +7,7 @@ import 'package:se_lab/pages/llogin_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/pages/profile_page.dart';
 import 'package:se_lab/pages/view_flight_page.dart';
+import 'package:se_lab/pages/view_seat_page.dart';
 import 'package:se_lab/widgets/drawer.dart';
 
 class HomePage extends StatefulWidget  {
@@ -59,23 +60,30 @@ class _HomePageState extends State<HomePage> {
           // Handle profile tap
           Navigator.of(context).pop(); 
           Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddFlight()), // Replace with the actual name of your sign-up page class
-                        );// Close the drawer
+            context,
+            MaterialPageRoute(builder: (context) => const AddFlight()), // Replace with the actual name of your sign-up page class
+          );// Close the drawer
         },
         onMenuItem2Tap: () {
           Navigator.of(context).pop(); 
           Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const ViewFlight()), 
-                        );
+            context,
+            MaterialPageRoute(builder: (context) => const ViewFlight()), 
+          );
         },
         onMenuItem3Tap: () {
           Navigator.of(context).pop(); 
           Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const AddSeat()), 
-                        );
+            context,
+            MaterialPageRoute(builder: (context) => const AddSeat()), 
+          );
+        },
+        onMenuItem4Tap: () {
+          Navigator.of(context).pop(); 
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ViewSeat()), 
+          );
         },
       ),
       /*drawer: Drawer(
