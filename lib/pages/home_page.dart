@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/add_seat_page.dart';
 import 'package:se_lab/pages/customer_home_page.dart';
+import 'package:se_lab/pages/hotel_recommendation_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/pages/profile_page.dart';
@@ -83,6 +84,13 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const ViewSeat()), 
+          );
+        },
+        onMenuItem5Tap: () {
+          Navigator.of(context).pop(); 
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HotelRecommendation()), 
           );
         },
       ),

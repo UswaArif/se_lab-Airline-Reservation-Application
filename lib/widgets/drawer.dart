@@ -8,8 +8,10 @@ class MyDrawer extends StatelessWidget {
   final VoidCallback? onMenuItem2Tap;
   final VoidCallback? onMenuItem3Tap;
   final VoidCallback? onMenuItem4Tap;
+  final VoidCallback? onMenuItem5Tap;
 
-  MyDrawer({required this.user, this.onProfileTap, this.onMenuItem2Tap, this.onMenuItem3Tap, this.onMenuItem4Tap});
+  MyDrawer({required this.user, this.onProfileTap, this.onMenuItem2Tap, this.onMenuItem3Tap, this.onMenuItem4Tap, 
+  this.onMenuItem5Tap});
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +59,14 @@ class MyDrawer extends StatelessWidget {
             onTap: () {
               if (onMenuItem4Tap != null) {
                 onMenuItem4Tap!();
+              }
+            },
+          ),
+          ListTile(
+            title: Text("Offers"),
+            onTap: () {
+              if (onMenuItem5Tap != null) {
+                onMenuItem5Tap!();
               }
             },
           ),
