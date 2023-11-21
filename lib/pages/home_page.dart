@@ -8,6 +8,7 @@ import 'package:se_lab/pages/hotel_recommendation_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/pages/profile_page.dart';
+import 'package:se_lab/pages/view_baggage_page.dart';
 import 'package:se_lab/pages/view_flight_page.dart';
 import 'package:se_lab/pages/view_seat_page.dart';
 import 'package:se_lab/widgets/drawer.dart';
@@ -99,6 +100,13 @@ class _HomePageState extends State<HomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddBaggage()), 
+          );
+        },
+        onMenuItem7Tap: () {
+          Navigator.of(context).pop(); 
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ViewBaggage()), 
           );
         },
       ),

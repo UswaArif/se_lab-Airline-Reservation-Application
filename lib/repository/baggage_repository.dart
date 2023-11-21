@@ -29,4 +29,9 @@ class BaggageRepository{
     }
   }
 
+  Future<void> updateBaggageRecord(BaggageModel baggage) async{
+    await _db.collection("Baggage").doc(baggage.id).update(baggage.toJson());
+    print("Successfully updated");
+  }
+
 }
