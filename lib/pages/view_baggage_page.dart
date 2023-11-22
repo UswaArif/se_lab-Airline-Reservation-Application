@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/pages/rules_baggage_page.dart';
 import 'package:se_lab/pages/update_baggage_page.dart';
 
 class ViewBaggage extends StatefulWidget {
@@ -64,12 +65,12 @@ class _ViewBaggageState extends State<ViewBaggage> {
             ),
           ),
           const SizedBox(height: 16),
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(left: 16.0), 
                   child: Text(
                     "View Baggage",
@@ -78,6 +79,42 @@ class _ViewBaggageState extends State<ViewBaggage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.deepPurple,
                     ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0), // Margin from the right side
+                  child: Column(
+                    children: [                     
+                      Material(
+                        color: Colors.deepPurple,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const RulesBaggage()), 
+                            );
+
+                          },
+                          child: const SizedBox(
+                            width: 100, 
+                            height: 43, 
+                            child: Center(
+                              child: Text(
+                                "Rules and Regulations",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],

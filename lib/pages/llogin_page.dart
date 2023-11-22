@@ -56,14 +56,18 @@ class _loginPageState extends State<LoginPage> {
         DocumentSnapshot userDataSnapshot = querySnapshot.docs.first;
         Map<String, dynamic> userData = userDataSnapshot.data() as Map<String, dynamic>;
 
+        // Add the document ID to the userData map
+        userData['documentID'] = userDataSnapshot.id;
         String username = userData['FullName'];
         String email = userData['Email'];
         String userRole = userData['Role'];
         role = userRole;
+        //print(userData);
 
         print("Full Name: $username");
         print("Email: $email");
         print("Role: $userRole");
+        //print(userData);
 
         if (role == "admin") {
           Navigator.push(
@@ -73,7 +77,7 @@ class _loginPageState extends State<LoginPage> {
         } else if (role == "customer") {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const CustomerHomePage()),
+            MaterialPageRoute(builder: (context) => CustomerHomePage(UserData: userData)),
           );
         } else {
           Navigator.push(
