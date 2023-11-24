@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:intl/intl.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
 import 'package:se_lab/widgets/customer_drawer.dart';
@@ -20,6 +23,52 @@ class _customerPageState extends State<CustomerHomePage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _toController = TextEditingController();
   TextEditingController _destinationController = TextEditingController();
+  List<Map<String, dynamic>> flightDataList = [];
+  String? selectedSource;
+  bool isMatchFound = false;
+  List<Map<String, dynamic>> matchedflightList = [];
+  bool showAdditionalWidget = false; 
+  List<bool> seatHoverStates = [];
+
+  @override
+  void initState() {
+    super.initState();
+    // Call the function to get flight data from Firebase when the widget is initialized
+    getFlightData();
+  }
+
+  Future<void> getFlightData() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("Flight")
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Retrieve and store flight data in the list
+        flightDataList = querySnapshot.docs.map((flightSnapshot) {
+        final data = flightSnapshot.data() as Map<String, dynamic>;
+        final documentId = flightSnapshot.id; // Get the document ID
+        data['documentId'] = documentId; // Add the document ID to the data
+        return data;
+      }).toList();
+        //print(flightDataList);
+        // Force a rebuild to display the flight data
+        setState(() {});
+      } else {
+        print("No flight data found in Firestore.");
+      }
+    } catch (e) {
+      print("An unexpected error occurred: $e");
+    }
+  }
+
+  String _formatTimestamp(Timestamp timestamp) {
+  final DateTime dateTime = timestamp.toDate();
+  //final formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+  final DateFormat format = DateFormat('MMMM d, HH:mm');
+  final String formattedDateTime = format.format(dateTime);
+  return formattedDateTime;
+}
 
   void _openDrawer() {
     if (_scaffoldKey.currentState != null) {
@@ -68,53 +117,288 @@ class _customerPageState extends State<CustomerHomePage> {
           );*/
         },
       ),
-      body: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _toController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the "To" field';
-                        }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'To',
-                        border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: TypeAheadFormField<Map<String, dynamic>>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: _toController,
+                          decoration: const InputDecoration(
+                            labelText: 'Source',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        suggestionsCallback: (String pattern) {
+                          return flightDataList.where((flight) {
+                            return flight['Source'].toLowerCase().contains(pattern.toLowerCase());
+                          }).toList();
+                        },
+                        itemBuilder: (BuildContext context, Map<String, dynamic> suggestion) {
+                          return ListTile(
+                            title: Text(suggestion['Source']),
+                          );
+                        },
+                        onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                          setState(() {
+                            _toController.text = suggestion['Source'];
+                          });
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a source';
+                          }
+                          return null;
+                        },
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10), // Space between text fields
-                  Icon(Icons.arrow_circle_right_sharp),
-                  SizedBox(width: 10), // Space between text fields
-                  Expanded(
-                    child: TextFormField(
-                      controller: _destinationController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter the "Destination" field';
+                    const SizedBox(width: 20), // Space between text fields and icon
+                    const Icon(Icons.arrow_circle_right_rounded),
+                    const SizedBox(width: 20), // Space between icon and text fields
+                    Expanded(
+                      child: TypeAheadFormField<Map<String, dynamic>>(
+                        textFieldConfiguration: TextFieldConfiguration(
+                          controller: _destinationController,
+                          decoration: const InputDecoration(
+                            labelText: 'Destination',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        suggestionsCallback: (String pattern) {
+                          return flightDataList.where((flight) {
+                            return flight['Destination'].toLowerCase().contains(pattern.toLowerCase());
+                          }).toList();
+                        },
+                        itemBuilder: (BuildContext context, Map<String, dynamic> suggestion) {
+                          return ListTile(
+                            title: Text(suggestion['Destination']),
+                          );
+                        },
+                        onSuggestionSelected: (Map<String, dynamic> suggestion) {
+                          setState(() {
+                            _destinationController.text = suggestion['Destination'];
+                          });
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return 'Please enter a destination';
+                          }
+                          return null;
                         }
-                        return null;
-                      },
-                      decoration: InputDecoration(
-                        labelText: 'Destination',
-                        border: OutlineInputBorder(),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      for (Map<String, dynamic> flightData in flightDataList) {  
+                        matchedflightList.clear();   
+                        if (flightData['Source'] == _toController.text && flightData['Destination'] == _destinationController.text) {
+                          isMatchFound = true;  
+                          matchedflightList.add(flightData);                     
+                          print("Flight is matched");
+                          break;
+                        }
+                        else{
+                          isMatchFound = false;
+                        }
+                      }                   
+                    }
+                    if (isMatchFound) {
+                      setState(() {
+                        showAdditionalWidget = true;
+                      });
+                    }
+                    else{                            
+                      print("No flight available");
+                      setState(() {
+                        showAdditionalWidget = false; // Hiding additional widget if no match found
+                      });
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AlertDialog(
+                            title: Text('No flight is available of this Source and Destination'),
+                          );
+                        },
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
+                const SizedBox(height: 12),
+                if (showAdditionalWidget)   
+                  ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurpleAccent, // Background color
+                        border: Border.all(color: Colors.deepPurple, width: 2.0), // Add a border
+                      ),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height,
+                        child: ListView.builder(
+                          itemCount: matchedflightList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            final flightData = matchedflightList[index];
+                            if (seatHoverStates.length <= index) {
+                              seatHoverStates.add(false);
+                            }
+                            return GestureDetector(
+                              onTap: () {
+                                print('Container tapped');
+                                /*Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => UpdateSeat(seatData: seat,),
+                                  ),
+                                );*/
+                              },
+                              child: MouseRegion(
+                                onEnter: (_) {
+                                  // Change color when mouse enters the region
+                                  setState(() {
+                                    seatHoverStates[index] = true;
+                                  });
+                                },
+                                onExit: (_) {
+                                  // Change color back when mouse exits the region
+                                  setState(() {
+                                    seatHoverStates[index] = false;
+                                  });
+                                },
+                                child: Container(
+                                  margin: const EdgeInsets.all(16.0),
+                                  padding: const EdgeInsets.all(16.0),
+                                  decoration: BoxDecoration(
+                                    color: seatHoverStates[index]
+                                    ? Color.fromARGB(255, 219, 209, 221)
+                                    : Colors.white,
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Align(
+                                        alignment: Alignment.center,
+                                        child: Text("FLIGHT NO.",
+                                          
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Text("${flightData['FlightNumber']}",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold, // You can apply any styling you want
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("${flightData['Source']}",
+                                            style: const TextStyle(
+                                              fontSize: 25, 
+                                            ),
+                                          ),
+                                          const Icon(
+                                            Icons.flight_takeoff_outlined, 
+                                            size: 25, 
+                                            color: Colors.red,
+                                          ),
+                                          Text("${flightData['Destination']}",
+                                            style: const TextStyle(
+                                              fontSize: 25, 
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      const Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Departure Time",
+                                            style: TextStyle(
+                                              fontSize: 10, 
+                                            ),
+                                          ),
+                                          Text("Arrival Time        ",
+                                            style: TextStyle(
+                                              fontSize: 10, 
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(_formatTimestamp(flightData['DepartureTime']),
+                                            style: const TextStyle(
+                                              fontSize: 10, 
+                                            ),
+                                          ),
+                                          Text(_formatTimestamp(flightData['ArrivalTIme']),
+                                            style: const TextStyle(
+                                              fontSize: 10, 
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 6),
+                                      const Divider( 
+                                        color: Colors.black, 
+                                        thickness: 1, 
+                                      ), 
+                                      RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            const TextSpan(
+                                              text: 'Flight Price: ',
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: '${flightData['Price']}',
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+
+                                      // Add more flight data fields here
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  )
+              ],
+            ),
           ),
         ),
       ),
