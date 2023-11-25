@@ -185,122 +185,122 @@ class _ViewSeatPageState extends State<ViewSeat> {
                       ),
                       child: Container(
                         decoration: BoxDecoration(
-                        color: Colors.deepPurpleAccent, // Background color
-                        border: Border.all(color: Colors.deepPurple, width: 2.0), // Add a border
-                      ),
-                      child: SizedBox(
-                        height: 400, // Adjust the height as needed
-                        child: ListView.builder(
-                          itemCount: matchedSeatList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            final seat = matchedSeatList[index];
-                            if (seatHoverStates.length <= index) {
-                              seatHoverStates.add(false);
-                            }
-                            return GestureDetector(
-                              onTap: () {
-                                print('Container tapped');
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UpdateSeat(seatData: seat,),
-                                  ),
-                                );
-                              },
-                              child: MouseRegion(
-                                onEnter: (_) {
-                                  // Change color when mouse enters the region
-                                  setState(() {
-                                    seatHoverStates[index] = true;
-                                  });
+                          color: Colors.deepPurpleAccent, // Background color
+                          border: Border.all(color: Colors.deepPurple, width: 2.0), // Add a border
+                        ),
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height, // Adjust the height as needed
+                          child: ListView.builder(
+                            itemCount: matchedSeatList.length,
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemBuilder: (context, index) {
+                              final seat = matchedSeatList[index];
+                              if (seatHoverStates.length <= index) {
+                                seatHoverStates.add(false);
+                              }
+                              return GestureDetector(
+                                onTap: () {
+                                  print('Container tapped');
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => UpdateSeat(seatData: seat,),
+                                    ),
+                                  );
                                 },
-                                onExit: (_) {
-                                  // Change color back when mouse exits the region
-                                  setState(() {
-                                    seatHoverStates[index] = false;
-                                  });
-                                },
-                                child: Container(
-                                  margin: const EdgeInsets.all(16.0),
-                                  padding: const EdgeInsets.all(16.0),
-                                  decoration: BoxDecoration(
-                                    color: seatHoverStates[index]
-                                    ? Color.fromARGB(255, 219, 209, 221)
-                                    : Colors.white,
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      const Align(
-                                        alignment: Alignment.center,
-                                        child: Text("SEAT NO.",
-                                          
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text("${seat['SeatNumber']}",
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold, // You can apply any styling you want
+                                child: MouseRegion(
+                                  onEnter: (_) {
+                                    // Change color when mouse enters the region
+                                    setState(() {
+                                      seatHoverStates[index] = true;
+                                    });
+                                  },
+                                  onExit: (_) {
+                                    // Change color back when mouse exits the region
+                                    setState(() {
+                                      seatHoverStates[index] = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    margin: const EdgeInsets.all(16.0),
+                                    padding: const EdgeInsets.all(16.0),
+                                    decoration: BoxDecoration(
+                                      color: seatHoverStates[index]
+                                      ? Color.fromARGB(255, 219, 209, 221)
+                                      : Colors.white,
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Align(
+                                          alignment: Alignment.center,
+                                          child: Text("SEAT NO.",
+                                            
                                           ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Feature:",
-                                            style: TextStyle(
-                                              fontSize: 15, 
-                                            ),
-                                          ),
-                                          Text("Status:",
-                                            style: TextStyle(
-                                              fontSize: 15, 
-                                            ),
-                                          ),
-                                          Text("Discount:",
-                                            style: TextStyle(
-                                              fontSize: 15, 
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 2),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("${seat['SeatAttribute']}",
+                                        Align(
+                                          alignment: Alignment.center,
+                                          child: Text("${seat['SeatNumber']}",
                                             style: const TextStyle(
-                                              fontSize: 15, 
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.bold, // You can apply any styling you want
                                             ),
                                           ),
-                                          Text("${seat['SeatStatus']}",
-                                            style: const TextStyle(
-                                              fontSize: 15, 
-                                              fontWeight: FontWeight.bold,
+                                        ),
+                                        const SizedBox(height: 8),
+                                        const Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("Feature:",
+                                              style: TextStyle(
+                                                fontSize: 15, 
+                                              ),
                                             ),
-                                          ),
-                                          Text("${seat['Discount']}",
-                                            style: const TextStyle(
-                                              fontSize: 15, 
-                                              fontWeight: FontWeight.bold,
+                                            Text("Status:",
+                                              style: TextStyle(
+                                                fontSize: 15, 
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+                                            Text("Discount:",
+                                              style: TextStyle(
+                                                fontSize: 15, 
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 2),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text("${seat['SeatAttribute']}",
+                                              style: const TextStyle(
+                                                fontSize: 15, 
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text("${seat['SeatStatus']}",
+                                              style: const TextStyle(
+                                                fontSize: 15, 
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text("${seat['Discount']}",
+                                              style: const TextStyle(
+                                                fontSize: 15, 
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
+                              );
+                            },
+                          ),
                         ),
-                      ),
                       ),
                     ),
 

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
+import 'package:se_lab/pages/customer_seat_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
 import 'package:se_lab/widgets/customer_drawer.dart';
 
@@ -75,6 +76,19 @@ class _customerPageState extends State<CustomerHomePage> {
       _scaffoldKey.currentState!.openDrawer();
     }
   }
+
+  List<Map<String, dynamic>> removeDuplicates(
+    List<Map<String, dynamic>> list, String key) {
+    Map<dynamic, Map<String, dynamic>> map = {};
+    list.forEach((element) {
+      final value = element[key];
+      if (!map.containsKey(value)) {
+        map[value] = element;
+      }
+    });
+    return map.values.toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,9 +152,15 @@ class _customerPageState extends State<CustomerHomePage> {
                           ),
                         ),
                         suggestionsCallback: (String pattern) {
-                          return flightDataList.where((flight) {
-                            return flight['Source'].toLowerCase().contains(pattern.toLowerCase());
-                          }).toList();
+                          List<Map<String, dynamic>> filteredList = flightDataList
+                              .where((flight) =>
+                                  flight['Source'].toLowerCase().contains(pattern.toLowerCase()))
+                              .toList();
+
+                          // Deduplicate the filtered list based on the 'Source' key
+                          List<Map<String, dynamic>> deduplicatedList = removeDuplicates(filteredList, 'Source');
+
+                          return deduplicatedList;
                         },
                         itemBuilder: (BuildContext context, Map<String, dynamic> suggestion) {
                           return ListTile(
@@ -173,9 +193,15 @@ class _customerPageState extends State<CustomerHomePage> {
                           ),
                         ),
                         suggestionsCallback: (String pattern) {
-                          return flightDataList.where((flight) {
-                            return flight['Destination'].toLowerCase().contains(pattern.toLowerCase());
-                          }).toList();
+                          List<Map<String, dynamic>> filteredList = flightDataList
+                              .where((flight) =>
+                                  flight['Destination'].toLowerCase().contains(pattern.toLowerCase()))
+                              .toList();
+
+                          // Deduplicate the filtered list based on the 'Source' key
+                          List<Map<String, dynamic>> deduplicatedList = removeDuplicates(filteredList, 'Destination');
+
+                          return deduplicatedList;
                         },
                         itemBuilder: (BuildContext context, Map<String, dynamic> suggestion) {
                           return ListTile(
@@ -240,8 +266,8 @@ class _customerPageState extends State<CustomerHomePage> {
                 if (showAdditionalWidget)   
                   ClipRRect(
                     borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20.0),
-                          topRight: Radius.circular(20.0),
+                      topLeft: Radius.circular(20.0),
+                      topRight: Radius.circular(20.0),
                     ),
                     child: Container(
                       decoration: BoxDecoration(
@@ -262,12 +288,12 @@ class _customerPageState extends State<CustomerHomePage> {
                             return GestureDetector(
                               onTap: () {
                                 print('Container tapped');
-                                /*Navigator.push(
+                                Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => UpdateSeat(seatData: seat,),
+                                    builder: (context) => CustomerSeatPage(userData: widget.UserData,flightData: flightData,),
                                   ),
-                                );*/
+                                );
                               },
                               child: MouseRegion(
                                 onEnter: (_) {
@@ -385,7 +411,6 @@ class _customerPageState extends State<CustomerHomePage> {
                                           ],
                                         ),
                                       )
-
                                       // Add more flight data fields here
                                     ],
                                   ),
