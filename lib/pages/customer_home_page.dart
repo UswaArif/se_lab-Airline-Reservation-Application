@@ -64,12 +64,12 @@ class _customerPageState extends State<CustomerHomePage> {
   }
 
   String _formatTimestamp(Timestamp timestamp) {
-  final DateTime dateTime = timestamp.toDate();
-  //final formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-  final DateFormat format = DateFormat('MMMM d, HH:mm');
-  final String formattedDateTime = format.format(dateTime);
-  return formattedDateTime;
-}
+    final DateTime dateTime = timestamp.toDate();
+    //final formattedDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+    final DateFormat format = DateFormat('MMMM d, HH:mm');
+    final String formattedDateTime = format.format(dateTime);
+    return formattedDateTime;
+  }
 
   void _openDrawer() {
     if (_scaffoldKey.currentState != null) {
@@ -227,20 +227,19 @@ class _customerPageState extends State<CustomerHomePage> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      matchedflightList.clear();   
                       for (Map<String, dynamic> flightData in flightDataList) {  
-                        matchedflightList.clear();   
+                        
                         if (flightData['Source'] == _toController.text && flightData['Destination'] == _destinationController.text) {
                           isMatchFound = true;  
                           matchedflightList.add(flightData);                     
                           print("Flight is matched");
-                          break;
-                        }
-                        else{
-                          isMatchFound = false;
-                        }
+                          //break;
+                        }                        
                       }                   
                     }
-                    if (isMatchFound) {
+                    //print(matchedflightList);
+                    if (matchedflightList.isNotEmpty) {
                       setState(() {
                         showAdditionalWidget = true;
                       });

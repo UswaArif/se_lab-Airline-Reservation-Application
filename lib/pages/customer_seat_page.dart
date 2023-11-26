@@ -23,6 +23,7 @@ class _CustomerSeatPageState extends State<CustomerSeatPage> {
   List<Map<String, dynamic>> matchedseatList = [];
   bool showAdditionalWidget = false;
   List<bool> seatHoverStates = [];
+  Map<String, dynamic> seatTypeObject = {};
 
   @override
   void initState() {
@@ -151,6 +152,7 @@ class _CustomerSeatPageState extends State<CustomerSeatPage> {
                               if(seatData['SeatTypeId'] == seattypeData['documentId'] && seattypeData['Name'] == selectedSeatType)
                               {
                                 matchedseatList.add(seatData);  
+                                seatTypeObject = seattypeData;
                                 isMatchFound = true;
                                 print("Seat is matched");   
                                 break;                             
@@ -216,7 +218,7 @@ class _CustomerSeatPageState extends State<CustomerSeatPage> {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => CustomerCheckout(user: widget.userData,flight: widget.flightData,
-                                        seat: seatData,),
+                                        seat: seatData,seattype: seatTypeObject,),
                                       ),
                                     );
                                   }
