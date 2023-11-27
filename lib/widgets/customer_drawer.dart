@@ -6,8 +6,9 @@ class CustomerDrawer extends StatelessWidget {
   final VoidCallback? onTap2;
   final VoidCallback? onTap3;
   final VoidCallback? onTap4;
+  final VoidCallback? onTap5;
 
-  const CustomerDrawer({this.user, this.onProfileTap, this.onTap2, this.onTap3, this.onTap4});
+  const CustomerDrawer({this.user, this.onProfileTap, this.onTap2, this.onTap3, this.onTap4, this.onTap5});
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +57,14 @@ class CustomerDrawer extends StatelessWidget {
             onTap: () {
               if (onTap4 != null) {
                 onTap4!();
+              }
+            },
+          ),
+          ListTile(
+            title: const Text("About Us"),
+            onTap: () {
+              if (onTap5 != null) {
+                onTap5!();
               }
             },
           ),

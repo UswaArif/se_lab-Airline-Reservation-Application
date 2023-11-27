@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/log_table.dart';
+import 'package:se_lab/classes/payment_model.dart';
 import 'package:se_lab/classes/seats_model.dart';
 import 'package:se_lab/classes/ticket_model.dart';
 import 'package:se_lab/repository/logtable_repository.dart';
+import 'package:se_lab/repository/payment_repository.dart';
 import 'package:se_lab/repository/seat_repository.dart';
 import 'package:se_lab/repository/ticket_repository.dart';
 
@@ -30,8 +32,51 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
   final TextEditingController _passportnumber = TextEditingController();
   final TextEditingController _cnic = TextEditingController();
   final TextEditingController _email = TextEditingController();
+  final TextEditingController _accountno = TextEditingController();
   bool isLoading = false;
   int price = 0;
+  List<Map<String, dynamic>> paymentMethodDataList = [];
+  String? selectedPaymentMethod; 
+  String? selectedBank; 
+  Future<String>? documentId;
+
+  @override
+  void initState() {
+    super.initState();
+    //selectedPaymentMethod = ['Credit', 'Wallet', 'Debit'].first;
+    getPaymentMethodData();
+    
+  }
+  
+  Future<void> getPaymentMethodData() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("PaymentMethod")
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        paymentMethodDataList = querySnapshot.docs.map((paymentmethodSnapshot) {
+        final data = paymentmethodSnapshot.data() as Map<String, dynamic>;
+        final documentId = paymentmethodSnapshot.id; // Get the document ID
+        data['documentId'] = documentId; // Add the document ID to the data
+        return data;
+      }).toList();
+      //print(paymentMethodDataList);
+        setState(() {});
+      } else {
+        print("No Payment Method data found in Firestore.");
+      }
+    } catch (e) {
+      print("An unexpected error occurred: $e");
+      final log = LogTable(
+        page_name: "customer_checkout_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
+    }
+  }
   
   String _formatTimestamp(Timestamp timestamp) {
     final DateTime dateTime = timestamp.toDate();
@@ -46,7 +91,7 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
       setState(() {
         isLoading = true;
       });
-      // Add Baggage object using your class
+      // Add Ticket object using your class
       final ticket = TicketModel(
         ticket_buyer_name: _name.text,
         passport_number: int.parse(_passportnumber.text),
@@ -61,7 +106,7 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
         active: true,
       );
       final ticketRepository = TicketRepository();
-      ticketRepository.createTicket(context, ticket);
+      documentId = ticketRepository.createTicket(context, ticket);
       print("Ticket added Successfully.");
 
       // Update seat status to 'reserved'
@@ -81,6 +126,58 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
 
     final seatRepository = SeatRepository();
     seatRepository.updateSeatRecord(updatedSeat);
+
+      setState(() {
+        isLoading = false;
+      });  
+    } 
+    catch (e) {
+      setState(() {
+        isLoading = false;
+        print("Not done");
+      });
+      print("here is error");
+      print(e);
+      
+      //log table
+      final log = LogTable(
+        page_name: "customer_checkout_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
+    }
+  }
+
+  addPayment() {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+      String paymentmethod = '';
+      for (Map<String, dynamic> pay in paymentMethodDataList) {     
+        if (pay['Type'] == selectedPaymentMethod) {
+          paymentmethod =  pay['documentId'];
+          break;
+        }
+      }  
+      // Add Payment object using your class
+      final payment = PaymentModel(
+        user_id: widget.user['documentID'],
+        payment_method_id: paymentmethod,
+        paid_amount: price,
+        ticket_id: documentId.toString(),
+        bank_name: selectedBank ?? "HBL",
+        account_no: int.parse(_accountno.text),
+        payment_status: 'Paid',
+        created_at: Timestamp.now(),
+        updated_at: Timestamp.now(),
+        active: true,
+      );
+      final paymentRepository = PaymentRepository();
+      paymentRepository.createPayment(context, payment);
+      print("payment added Sucessfully");
 
       setState(() {
         isLoading = false;
@@ -239,7 +336,7 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
                       border: Border.all(color: Colors.deepPurple, width: 2.0), // Add a border
                     ),
                     child: SizedBox(
-                      height: 350,
+                      height: MediaQuery.of(context).size.height,
                       child: Form(
                         key: _formKey2,
                         child: Column(
@@ -362,6 +459,139 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
                                 ),
                               ),
                             ),
+                            //Payment Method
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonFormField<String>(
+                                    decoration: const InputDecoration(
+                                      prefixIcon: Icon(Icons.payments_outlined, color: Colors.white),
+                                      labelText: 'Payment Method',
+                                      labelStyle: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white),
+                                      ),
+                                    ),
+                                    value: selectedPaymentMethod,
+                                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                                    iconSize: 24,
+                                    elevation: 16,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedPaymentMethod = newValue!;
+                                        //print(selectedSeatType);
+                                      });
+                                    },
+                                    items: <String>['Credit', 'Wallet', 'Debit']
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select a payment method';
+                                      }
+                                      return null;
+                                    },
+                                  ),                
+                                ],
+                              ),
+                            ),
+                            //Bank Name
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  DropdownButtonFormField<String>(
+                                    decoration: const InputDecoration(
+                                      prefixIcon: Icon(Icons.account_balance, color: Colors.white),
+                                      labelText: 'Bank',
+                                      labelStyle: TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      focusedBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white),
+                                      ),
+                                      enabledBorder: UnderlineInputBorder(
+                                        borderSide: BorderSide(color: Colors.white),
+                                      ),
+                                    ),
+                                    value: selectedBank,
+                                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                                    iconSize: 24,
+                                    elevation: 16,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    ),
+                                    onChanged: (String? newValue) {
+                                      setState(() {
+                                        selectedBank = newValue!;
+                                        //print(selectedSeatType);
+                                      });
+                                    },
+                                    items: <String>['HBL', 'Soneri', 'Allied']
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Please select a Bank name';
+                                      }
+                                      return null;
+                                    },
+                                  ),                
+                                ],
+                              ),
+                            ),
+                            //Account no
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30.0), // Add left and right margin
+                              child: TextFormField(
+                                controller: _accountno,
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(11), // Limit input to 11 characters
+                                  FilteringTextInputFormatter.allow(RegExp(r'[0-9]')), // Allow only numbers
+                                ],
+                                keyboardType: TextInputType.number,
+                                validator: (text){
+                                  if(text == null || text.isEmpty){
+                                    return 'Account No. is empty';
+                                  }
+                                  return null;
+                                },
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.account_circle, color: Colors.white,),
+                                  hintText: 'Account Number is only 11 digits',
+                                  hintStyle: TextStyle(color: Colors.grey),
+                                  labelText: "Account No.",
+                                  labelStyle: TextStyle(
+                                    color: Colors.white, // Set the text color to white
+                                  ),
+                                  focusedBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white), // Set the border color when focused
+                                  ),
+                                  enabledBorder: UnderlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.white), // Set the border color when enabled
+                                  ),
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 12),
                             //Button
                             Padding(
@@ -372,10 +602,10 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
                                 child: ElevatedButton(                                 
                                   onPressed: () {
                                     if (_formKey2.currentState!.validate()) { 
-                                      if (_passportnumber.text.length == 10 && _cnic.text.length == 13)
+                                      if (_passportnumber.text.length == 10 && _cnic.text.length == 13 && _accountno.text.length == 11)
                                       {
                                         addTicket();  
-
+                                        addPayment();
                                       } 
                                       else{
                                         showDialog(

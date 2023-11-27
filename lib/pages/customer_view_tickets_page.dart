@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:se_lab/classes/log_table.dart';
+import 'package:se_lab/classes/payment_model.dart';
 import 'package:se_lab/classes/seats_model.dart';
 import 'package:se_lab/classes/ticket_model.dart';
 import 'package:se_lab/repository/logtable_repository.dart';
+import 'package:se_lab/repository/payment_repository.dart';
 import 'package:se_lab/repository/seat_repository.dart';
 import 'package:se_lab/repository/ticket_repository.dart';
 
@@ -22,11 +24,13 @@ class _CustomerAllTicketState extends State<CustomerAllTicket> {
   List<Map<String, dynamic>> ticketList = [];
   List<Map<String, dynamic>> matchedticketList = [];
   List<Map<String, dynamic>> SeatDataList = [];
+  //List<Map<String, dynamic>> paymentDataList = [];
   @override
   void initState() {
     super.initState();
     getmatchedTicket();
     getSeatData();
+    //getPaymentData();
   }
   Future<void> getmatchedTicket() async {
     try {
@@ -98,6 +102,39 @@ class _CustomerAllTicketState extends State<CustomerAllTicket> {
       logRepository.createLog(context, log);
     }
   }
+
+  /*Future<void> getPaymentData() async {
+    try {
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection("Payment")
+          .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        // Retrieve seat data in the list
+        paymentDataList = querySnapshot.docs.map((PaymentSnapshot) {
+        final data = PaymentSnapshot.data() as Map<String, dynamic>;
+        final documentId = PaymentSnapshot.id; // Get the document ID
+        data['documentId'] = documentId; // Add the document ID to the data
+        return data;
+      }).toList();
+  
+        setState(() {});
+      } else {
+        print("No Payment data found in Firestore.");
+      }
+    } catch (e) {
+      print("An unexpected error occurred: $e");
+      
+      //log table
+      final log = LogTable(
+        page_name: "customer_view_tickets_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
+    }
+  }*/
 
 
   @override
@@ -186,6 +223,7 @@ class _CustomerAllTicketState extends State<CustomerAllTicket> {
                           IconButton(
                             icon: const Icon(Icons.airplane_ticket_rounded,color: Colors.red,), 
                             onPressed: () {
+                            
                               Map<String, dynamic> seatobj = {};
                               ticketData['Active'] = false;
                               final ticket = TicketModel(
@@ -227,6 +265,8 @@ class _CustomerAllTicketState extends State<CustomerAllTicket> {
                               );
                               final seatRepository = SeatRepository();
                               seatRepository.updateSeatRecord(updatedSeat);
+
+                              
                               print("ticket canceled");
                             },
                             

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/log_table.dart';
+import 'package:se_lab/pages/about_us_page.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/customer_seat_page.dart';
 import 'package:se_lab/pages/customer_view_tickets_page.dart';
@@ -162,6 +163,13 @@ class _customerPageState extends State<CustomerHomePage> {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const HotelRecommendation()), 
+          );
+        },
+        onTap5: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Aboutus()), 
           );
         },
       ),

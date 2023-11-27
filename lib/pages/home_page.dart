@@ -27,6 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size; 
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -110,6 +111,13 @@ class _HomePageState extends State<HomePage> {
             MaterialPageRoute(builder: (context) => const ViewBaggage()), 
           );
         },
+        onMenuItem8Tap: () {
+          Navigator.of(context).pop(); 
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AllFeedback()), 
+          );
+        },
       ),
       /*drawer: Drawer(
         child: ListView(
@@ -153,9 +161,10 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Text("My Airline", style: Theme.of(context).textTheme.headline2),
                 Text("Dedicated to Your Flight Comfort.", style: Theme.of(context).textTheme.subtitle2),
+                Image(image: AssetImage('assets/images/download.jpg')),
                 //Text("Paragraph", style: Theme.of(context).textTheme.bodyText1),
                 const SizedBox(height: 15,),
-                ElevatedButton(
+                /*ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -163,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                     );
                   }, 
                   child: const Text("See Feedbacks"),
-                ),
+                ),*/
                 const SizedBox(height: 15,),
                 //OutlinedButton(onPressed: () {}, child: const Text("Outlined Button")),
                 const Padding(
@@ -172,9 +181,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ],
             ),
-            Center(
-              child: Text(user!.email.toString()),
-            ),
+            
           ],
         ),
       ),
