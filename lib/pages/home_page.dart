@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:se_lab/pages/add_baggage_page.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/add_seat_page.dart';
+import 'package:se_lab/pages/all_feedback_page.dart';
 import 'package:se_lab/pages/customer_home_page.dart';
 import 'package:se_lab/pages/hotel_recommendation_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
@@ -150,11 +151,21 @@ class _HomePageState extends State<HomePage> {
             ListView(
               shrinkWrap: true, // Set shrinkWrap to true to make it fit the content
               children: [
-                Text("Heading", style: Theme.of(context).textTheme.headline2),
-                Text("Sub-heading", style: Theme.of(context).textTheme.subtitle2),
-                Text("Paragraph", style: Theme.of(context).textTheme.bodyText1),
-                ElevatedButton(onPressed: () {}, child: const Text("Elevated Button")),
-                OutlinedButton(onPressed: () {}, child: const Text("Outlined Button")),
+                Text("My Airline", style: Theme.of(context).textTheme.headline2),
+                Text("Dedicated to Your Flight Comfort.", style: Theme.of(context).textTheme.subtitle2),
+                //Text("Paragraph", style: Theme.of(context).textTheme.bodyText1),
+                const SizedBox(height: 15,),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AllFeedback()), 
+                    );
+                  }, 
+                  child: const Text("See Feedbacks"),
+                ),
+                const SizedBox(height: 15,),
+                //OutlinedButton(onPressed: () {}, child: const Text("Outlined Button")),
                 const Padding(
                   padding: EdgeInsets.all(20.0),
                   //child: Image(image: AssetImage("assets/images/your_image.png")), // Make sure to replace with your actual image path

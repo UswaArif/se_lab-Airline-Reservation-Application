@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/user_model.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class UserRepository {
   //static UserRepository get instance => Get.find();
@@ -30,6 +32,15 @@ class UserRepository {
         content: Text("Error creating account: $e"),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "user_repository",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

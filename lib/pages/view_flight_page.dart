@@ -2,9 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/flight_model.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/user_model.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/update_flight_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 
 class ViewFlight extends StatefulWidget {
@@ -58,6 +60,14 @@ String _formatTimestamp(Timestamp timestamp) {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "view_flight_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';  // text input in numbers
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/flight_model.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/repository/flight_repository.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class AddFlight extends StatefulWidget {
   const AddFlight({super.key});
@@ -130,6 +132,14 @@ class _addFlightState extends State<AddFlight> {
       });
       print("here is error");
       print(e);
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "add_flight_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

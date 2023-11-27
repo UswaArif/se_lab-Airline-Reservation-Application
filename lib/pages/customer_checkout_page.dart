@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/seats_model.dart';
 import 'package:se_lab/classes/ticket_model.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 import 'package:se_lab/repository/seat_repository.dart';
 import 'package:se_lab/repository/ticket_repository.dart';
 
@@ -91,12 +93,22 @@ class _CustomerCheckoutState extends State<CustomerCheckout> {
       });
       print("here is error");
       print(e);
+      
+      //log table
+      final log = LogTable(
+        page_name: "customer_checkout_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    price = widget.flight['Price'] + widget.seattype['Price'];
+    price =(widget.flight['Price'] + widget.seattype['Price']) - ((widget.flight['Price'] + widget.seattype['Price'])
+     * widget.seat['Discount']/100);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:se_lab/classes/baggage_model.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/repository/baggage_repository.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class UpdateBaggage extends StatefulWidget {
   final Map<String, dynamic> updatebaggageData;
@@ -41,6 +43,14 @@ class _UpdateBaggageState extends State<UpdateBaggage> {
       print("updateBaggage");
     } catch (e) {
       print(e);
+      //log table
+      final log = LogTable(
+        page_name: "update_baggage_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }   
   }
 

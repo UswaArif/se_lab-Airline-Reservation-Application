@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/pages/customer_checkout_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class CustomerSeatPage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -53,6 +55,14 @@ class _CustomerSeatPageState extends State<CustomerSeatPage> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "customer_seat_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
   
@@ -77,6 +87,14 @@ class _CustomerSeatPageState extends State<CustomerSeatPage> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "customer_seat_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
   

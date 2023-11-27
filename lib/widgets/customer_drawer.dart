@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 class CustomerDrawer extends StatelessWidget {
   final Map<String, dynamic>? user;
   final VoidCallback? onProfileTap;
+  final VoidCallback? onTap2;
+  final VoidCallback? onTap3;
+  final VoidCallback? onTap4;
 
-  const CustomerDrawer({this.user, this.onProfileTap});
+  const CustomerDrawer({this.user, this.onProfileTap, this.onTap2, this.onTap3, this.onTap4});
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +32,30 @@ class CustomerDrawer extends StatelessWidget {
             onTap: () {
               if (onProfileTap != null) {
                 onProfileTap!();
+              }
+            },
+          ),
+          ListTile(
+            title: const Text("View Tickets"),
+            onTap: () {
+              if (onTap2 != null) {
+                onTap2!();
+              }
+            },
+          ),
+          ListTile(
+            title: const Text("Feedback"),
+            onTap: () {
+              if (onTap3 != null) {
+                onTap3!();
+              }
+            },
+          ),
+          ListTile(
+            title: const Text("Offers"),
+            onTap: () {
+              if (onTap4 != null) {
+                onTap4!();
               }
             },
           ),

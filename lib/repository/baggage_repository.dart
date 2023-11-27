@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/classes/baggage_model.dart';
+import 'package:se_lab/classes/log_table.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class BaggageRepository{
   static BaggageRepository? _instance;
@@ -26,6 +28,15 @@ class BaggageRepository{
         content: Text("Error adding Baggage: $e"),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "baggage_repository",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

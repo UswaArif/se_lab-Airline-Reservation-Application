@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:se_lab/classes/flight_model.dart';
+import 'package:se_lab/classes/log_table.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class FlightRepository{
   //static FlightRepository get instance => Get.find();
@@ -29,6 +31,15 @@ class FlightRepository{
         content: Text("Error adding Flight: $e"),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "flight_repository",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

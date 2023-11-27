@@ -3,9 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/pages/add_flight_page.dart';
 import 'package:se_lab/pages/customer_seat_page.dart';
+import 'package:se_lab/pages/customer_view_tickets_page.dart';
+import 'package:se_lab/pages/feedback_page.dart';
+import 'package:se_lab/pages/hotel_recommendation_page.dart';
 import 'package:se_lab/pages/llogin_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 import 'package:se_lab/widgets/customer_drawer.dart';
 
 class CustomerHomePage extends StatefulWidget {
@@ -60,6 +65,14 @@ class _customerPageState extends State<CustomerHomePage> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "customer_home_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 
@@ -127,8 +140,29 @@ class _customerPageState extends State<CustomerHomePage> {
           Navigator.of(context).pop();
           /*Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => const AddFlight()), // Replace with the actual name of your sign-up page class
+            MaterialPageRoute(builder: (context) => const AddFlight()), 
           );*/
+        },
+        onTap2: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => CustomerAllTicket(user: widget.UserData,)), 
+          );
+        },
+        onTap3: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FeedbackCustomer(user: widget.UserData,)), 
+          );
+        },
+        onTap4: () {
+          Navigator.of(context).pop();
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const HotelRecommendation()), 
+          );
         },
       ),
       body: SingleChildScrollView(

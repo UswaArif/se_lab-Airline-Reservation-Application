@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/pages/update_seat_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class ViewSeat extends StatefulWidget {
   const ViewSeat({super.key});
@@ -46,6 +48,14 @@ class _ViewSeatPageState extends State<ViewSeat> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "view_seat_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 
@@ -70,6 +80,14 @@ class _ViewSeatPageState extends State<ViewSeat> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      //log table
+      final log = LogTable(
+        page_name: "view_seat_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

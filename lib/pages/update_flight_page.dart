@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:se_lab/classes/flight_model.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/repository/flight_repository.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class UpdateFlightPage extends StatefulWidget {
   final Map<String, dynamic> flightData;
@@ -133,6 +135,14 @@ class _updateFlightState extends State<UpdateFlightPage> {
     //print("updateFlight");
     } catch (e) {
       print(e);
+      //log table
+      final log = LogTable(
+        page_name: "update_flight_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
     
   }

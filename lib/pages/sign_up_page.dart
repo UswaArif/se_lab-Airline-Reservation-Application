@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/user_model.dart';
 import 'package:se_lab/pages/llogin_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 import 'package:se_lab/repository/user_repository.dart';
 
 
@@ -71,12 +73,31 @@ class _SignUpState extends State<SignUp> {
       });
     } on FirebaseAuthException catch (e) {
       print("Done");
+
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "sign_up_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
+
     } catch (e) {
       setState(() {
         isLoading = false;
         print("Not done");
       });
       print(e);
+
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "sign_up_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

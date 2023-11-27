@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/seats_model.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class SeatRepository{
   static SeatRepository? _instance;
@@ -27,6 +29,14 @@ class SeatRepository{
         content: Text("Error adding Seat: $e"),
       );
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "seat_repository",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

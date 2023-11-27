@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/pages/rules_baggage_page.dart';
 import 'package:se_lab/pages/update_baggage_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 
 class ViewBaggage extends StatefulWidget {
   const ViewBaggage({super.key});
@@ -39,6 +41,13 @@ class _ViewBaggageState extends State<ViewBaggage> {
       }
     } catch (e) {
       print("An unexpected error occurred: $e");
+      final log = LogTable(
+        page_name: "add_baggae_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   }
 

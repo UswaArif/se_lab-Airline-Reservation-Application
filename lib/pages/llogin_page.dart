@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:se_lab/classes/log_table.dart';
 import 'package:se_lab/classes/user_model.dart';
 import 'package:se_lab/pages/customer_home_page.dart';
 import 'package:se_lab/pages/forget_password.dart';
 import 'package:se_lab/pages/home_page.dart';
 import 'package:se_lab/pages/sign_up_page.dart';
+import 'package:se_lab/repository/logtable_repository.dart';
 import 'package:se_lab/repository/user_repository.dart';
 
 class LoginPage extends StatefulWidget {
@@ -103,9 +105,27 @@ class _loginPageState extends State<LoginPage> {
     } else {
       // Handle other Firebase Authentication exceptions
       print("Firebase Authentication Exception: ${e.code}");
+
+      //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "llogin_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
     }
   } catch (e) {
     print("An unexpected error occurred: $e");
+    
+    //////////////////log table /////////////////////////
+      final log = LogTable(
+        page_name: "llogin_page",
+        error: e.toString(),
+      );
+      final logRepository = LogTableRepository();
+      // ignore: use_build_context_synchronously
+      logRepository.createLog(context, log);
   }
 }
 
